@@ -1,0 +1,52 @@
+/* ============================================================
+   THEME  —  edit this file to re-skin the entire atlas.
+   Every color, font, and key dimension lives here as a token.
+   Swap these six color values and the whole site changes.
+   ============================================================ */
+
+:root {
+  /* ---- Palette (from the Location Atlas mockups) ---- */
+  --bg:        #f4ece6;  /* warm cream page background        */
+  --ink:       #2c1a17;  /* espresso brown — primary text     */
+  --accent:    #d84315;  /* rust/orange — links, active, GG   */
+  --muted:     #9d9288;  /* taupe — labels, metadata, eyebrows*/
+  --rule:      #2c1a17;  /* strong horizontal rules           */
+  --hairline:  #c6bbae;  /* thin cell & tile borders          */
+  --field:     #eae3d8;  /* subtle fill (hover, map marker bg)*/
+
+  /* ---- Typography ---- */
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+
+  /* Display scale */
+  --fs-hero:    clamp(2.75rem, 9vw, 8rem);
+  --fs-title:   clamp(2.25rem, 5.5vw, 4.5rem);
+  --fs-symbol:  clamp(2.25rem, 4vw, 3rem);  /* periodic tile glyph */
+  --fs-stat:    clamp(2.75rem, 6.5vw, 5rem);
+  --fs-body:    1.0625rem;
+  --fs-label:   0.6875rem;  /* mono eyebrows / metadata        */
+
+  --tracking-label: 0.18em;
+  --weight-display: 700;
+  --weight-body:    400;
+
+  /* ---- Layout ---- */
+  --maxw:    1320px;
+  --gutter:  clamp(1.25rem, 4vw, 3.5rem);
+  --rule-weight: 2px;
+  --hair-weight: 1px;
+  --tile:    150px;   /* periodic tile edge length */
+  --radius:  0px;     /* the system is square — keep at 0 */
+}
+
+/* Optional dark variant — flip data-theme="night" on <html> to use it.
+   Left here as a starting point; tune to taste. */
+:root[data-theme="night"] {
+  --bg:       #1c1714;
+  --ink:      #f2ede5;
+  --accent:   #e7672f;
+  --muted:    #8a7f74;
+  --rule:     #f2ede5;
+  --hairline: #4a4038;
+  --field:    #261f1a;
+}

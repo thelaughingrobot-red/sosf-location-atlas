@@ -1,0 +1,14 @@
+{
+  "title": "The Streets of San Francisco",
+  "tagline": "Location Atlas",
+  "volume": "Vol. 01 · A Fan-Curated Atlas",
+  "intro": "Every cable-car chase, every fog-soaked stake-out, every flight of painted-lady stairs — catalogued by season, episode, and coordinate. Browse the periodic index, or jump straight to the map.",
+  "studio": "QM Productions",
+  "network": "ABC",
+  "years": "1972 — 1977",
+  "place": "San Francisco, CA",
+  "placeCoords": "37.7749°N 122.4194°W",
+  "mapCenter": [37.7935, -122.4140],
+  "mapZoom": 14,
+  "footerNote": "Location Atlas · Fan Archive"
+}

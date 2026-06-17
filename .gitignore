@@ -1,0 +1,8 @@
+# generated output — rebuilt from the Google Sheet every time
+site/
+data/sosf.json
+data/csv/*.csv
+
+# macOS / misc
+.DS_Store
+*.pyc

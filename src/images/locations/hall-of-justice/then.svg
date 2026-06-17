@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
+  <rect width="900" height="600" fill="#d8c7a6"/>
+  <rect y="360" width="900" height="240" fill="#9c8a63"/>
+  <g opacity="0.5" fill="#caa26a">
+    <rect x="120" y="180" width="80" height="240"/><rect x="260" y="120" width="60" height="300"/>
+    <rect x="380" y="220" width="110" height="200"/><rect x="560" y="150" width="70" height="270"/>
+    <rect x="700" y="240" width="90" height="180"/>
+  </g>
+  <rect x="0" y="0" width="900" height="600" fill="none" stroke="#2b211b" stroke-width="3"/>
+  <text x="450" y="300" font-family="Helvetica Neue, Arial" font-size="150" font-weight="700"
+        fill="#2b211b" opacity="0.18" text-anchor="middle" dominant-baseline="middle">HJ</text>
+  <text x="40" y="560" font-family="ui-monospace, monospace" font-size="22" letter-spacing="3"
+        fill="#2b211b">HALL OF JUSTICE · THEN · 1972</text>
+</svg>
