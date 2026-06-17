@@ -47,12 +47,19 @@ function copyDir(from, to) {
   }
 }
 const imgExists = (rel) => rel && fs.existsSync(path.join(SRC, "images", rel));
-// Image paths come from the sheet (Then Image / Now Image columns), written
-// relative to src/images/locations/ — e.g. "s1/e0/loc1-then.jpg".
+// Image paths from the sheet (Then Image / Now Image columns):
+//   - Local path  e.g. "s1/e0/loc1-then.jpg"  → resolved relative to src/images/locations/
+//   - External URL e.g. "https://live.staticflickr.com/…"  → used directly as <img src>
+// Returns { src, external } or null (missing / local file not found).
 function resolveImg(sheetPath) {
   if (!sheetPath) return null;
+  if (/^https?:\/\//i.test(sheetPath)) return { src: sheetPath, external: true };
   const rel = "locations/" + String(sheetPath).trim().replace(/^\/+/, "");
-  return imgExists(rel) ? rel : null;
+  return imgExists(rel) ? { src: rel } : null;
+}
+function imgSrc(resolved) {
+  if (!resolved) return null;
+  return resolved.external ? resolved.src : url("assets/images/" + resolved.src);
 }
 
 /* ---------- derived counts ---------- */
@@ -247,11 +254,11 @@ function pageEpisode(se, ep) {
    PAGE: Location detail
    ============================================================ */
 function imageBlock(lo, year) {
-  const thenRel = resolveImg(lo.then && lo.then.src);
-  const nowRel = resolveImg(lo.now && lo.now.src);
-  const thenOk = !!thenRel, nowOk = !!nowRel;
-  const thenSrc = thenRel ? url("assets/images/" + thenRel) : null;
-  const nowSrc = nowRel ? url("assets/images/" + nowRel) : null;
+  const thenImg = resolveImg(lo.then && lo.then.src);
+  const nowImg = resolveImg(lo.now && lo.now.src);
+  const thenOk = !!thenImg, nowOk = !!nowImg;
+  const thenSrc = imgSrc(thenImg);
+  const nowSrc = imgSrc(nowImg);
   const thenYear = year || "";
 
   if (thenOk && nowOk) {

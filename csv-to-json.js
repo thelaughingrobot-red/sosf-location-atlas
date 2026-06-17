@@ -93,6 +93,7 @@ function buildLocation(r, ctx) {
     else issues.push(`${ctx}: bad coords lat="${latS}" lng="${lngS}" for "${name}"`);
   }
   // image paths typed in the sheet, relative to src/images/locations/ (e.g. "s1/e0/loc1-then.jpg")
+  // OR any https:// URL — Flickr photo page URLs are resolved to direct image URLs at build time.
   const thenImg = (r["Then Image"] || "").trim();
   const nowImg = (r["Now Image"] || "").trim();
   return {
@@ -153,45 +154,96 @@ function buildEpisodes(rows, label) {
   return episodes;
 }
 
+/* ---------- Flickr URL resolution via oEmbed (no API key required) ----------
+   Accepts Flickr photo page URLs (e.g. flickr.com/photos/user/12345/) in the
+   Then Image / Now Image columns. Resolved URLs are cached in data/flickr-cache.json
+   so repeat builds don't re-fetch. Direct image URLs pass through unchanged. */
+const FLICKR_PAGE_RE = /^https?:\/\/(www\.)?flickr\.com\/photos\//i;
+const FLICKR_CACHE_FILE = path.join(ROOT, "data", "flickr-cache.json");
+
+async function flickrResolve(pageUrl) {
+  const oembed = `https://www.flickr.com/services/oembed/?url=${encodeURIComponent(pageUrl)}&format=json`;
+  const res = await fetch(oembed);
+  if (!res.ok) throw new Error(`oEmbed HTTP ${res.status}`);
+  const json = await res.json();
+  if (!json.url) throw new Error("oEmbed response missing url field");
+  return json.url;
+}
+
+async function resolveFlickrUrls(seasons, specials) {
+  let cache = {};
+  if (fs.existsSync(FLICKR_CACHE_FILE)) {
+    try { cache = JSON.parse(fs.readFileSync(FLICKR_CACHE_FILE, "utf8")); } catch {}
+  }
+  let dirty = false;
+  const allLocs = [];
+  seasons.forEach(s => s.episodes.forEach(e => allLocs.push(...e.locations)));
+  specials.forEach(sp => allLocs.push(...sp.locations));
+  for (const lo of allLocs) {
+    for (const key of ["then", "now"]) {
+      const img = lo[key];
+      if (!img || !FLICKR_PAGE_RE.test(img.src)) continue;
+      const pageUrl = img.src;
+      if (!cache[pageUrl]) {
+        process.stdout.write(`  Resolving Flickr: ${pageUrl} … `);
+        try {
+          cache[pageUrl] = await flickrResolve(pageUrl);
+          process.stdout.write("ok\n");
+          dirty = true;
+        } catch (e) {
+          process.stdout.write(`FAILED (${e.message})\n`);
+          issues.push(`Flickr resolve failed for "${pageUrl}": ${e.message}`);
+        }
+      }
+      if (cache[pageUrl]) img.src = cache[pageUrl];
+    }
+  }
+  if (dirty) fs.writeFileSync(FLICKR_CACHE_FILE, JSON.stringify(cache, null, 2) + "\n");
+}
+
 /* ---------- assemble (skipped when required as a module for tests) ---------- */
 module.exports = { parseCSV, readTable, buildEpisodes, buildLocation, issues };
 if (require.main !== module) return;
 
-const show = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "show.json"), "utf8"));
-const seasons = [];
-for (let n = 1; n <= 5; n++) {
-  const file = path.join(CSV_DIR, `season-${n}.csv`);
-  if (!fs.existsSync(file)) { issues.push(`Missing ${file}`); continue; }
-  const eps = buildEpisodes(readTable(file), `S${n}`);
-  seasons.push({ number: n, title: `Season ${n}`, episodes: eps });
-}
+(async () => {
+  const show = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "show.json"), "utf8"));
+  const seasons = [];
+  for (let n = 1; n <= 5; n++) {
+    const file = path.join(CSV_DIR, `season-${n}.csv`);
+    if (!fs.existsSync(file)) { issues.push(`Missing ${file}`); continue; }
+    const eps = buildEpisodes(readTable(file), `S${n}`);
+    seasons.push({ number: n, title: `Season ${n}`, episodes: eps });
+  }
 
-// Specials (TV Movies tab) — parsed but kept aside under `specials`.
-let specials = [];
-const tvFile = path.join(CSV_DIR, "tv-movies.csv");
-if (fs.existsSync(tvFile)) {
-  specials = readTable(tvFile).filter(r => (r["Title"] || "").trim()).map(r => ({
-    title: r["Title"].trim(),
-    airDate: (r["Air Date"] || "").trim(),
-    locations: locName(r) && isPublished(r) ? [buildLocation(r, `Special "${r["Title"].trim()}"`)] : [],
-  }));
-}
+  // Specials (TV Movies tab) — parsed but kept aside under `specials`.
+  let specials = [];
+  const tvFile = path.join(CSV_DIR, "tv-movies.csv");
+  if (fs.existsSync(tvFile)) {
+    specials = readTable(tvFile).filter(r => (r["Title"] || "").trim()).map(r => ({
+      title: r["Title"].trim(),
+      airDate: (r["Air Date"] || "").trim(),
+      locations: locName(r) && isPublished(r) ? [buildLocation(r, `Special "${r["Title"].trim()}"`)] : [],
+    }));
+  }
 
-const out = { show, seasons, specials };
-fs.writeFileSync(OUT, JSON.stringify(out, null, 2) + "\n");
+  await resolveFlickrUrls(seasons, specials);
 
-/* ---------- report ---------- */
-const totEp = seasons.reduce((a, s) => a + s.episodes.length, 0);
-const totLoc = seasons.reduce((a, s) => a + s.episodes.reduce((b, e) => b + e.locations.length, 0), 0);
-console.log(`Wrote ${path.relative(ROOT, OUT)}`);
-seasons.forEach(s => console.log(`  Season ${s.number}: ${s.episodes.length} episodes, ${s.episodes.reduce((b, e) => b + e.locations.length, 0)} locations`));
-console.log(`  Specials: ${specials.length}`);
-console.log(`  TOTAL: ${seasons.length} seasons · ${totEp} episodes · ${totLoc} locations`);
-if (unpublished) console.log(`  (${unpublished} location(s) hidden — Published not set to true)`);
-if (issues.length) {
-  console.log(`\n⚠ ${issues.length} issue(s) to review:`);
-  issues.slice(0, 50).forEach(i => console.log("  - " + i));
-  if (issues.length > 50) console.log(`  …and ${issues.length - 50} more`);
-} else {
-  console.log("\n✓ No issues flagged.");
-}
+  const out = { show, seasons, specials };
+  fs.writeFileSync(OUT, JSON.stringify(out, null, 2) + "\n");
+
+  /* ---------- report ---------- */
+  const totEp = seasons.reduce((a, s) => a + s.episodes.length, 0);
+  const totLoc = seasons.reduce((a, s) => a + s.episodes.reduce((b, e) => b + e.locations.length, 0), 0);
+  console.log(`Wrote ${path.relative(ROOT, OUT)}`);
+  seasons.forEach(s => console.log(`  Season ${s.number}: ${s.episodes.length} episodes, ${s.episodes.reduce((b, e) => b + e.locations.length, 0)} locations`));
+  console.log(`  Specials: ${specials.length}`);
+  console.log(`  TOTAL: ${seasons.length} seasons · ${totEp} episodes · ${totLoc} locations`);
+  if (unpublished) console.log(`  (${unpublished} location(s) hidden — Published not set to true)`);
+  if (issues.length) {
+    console.log(`\n⚠ ${issues.length} issue(s) to review:`);
+    issues.slice(0, 50).forEach(i => console.log("  - " + i));
+    if (issues.length > 50) console.log(`  …and ${issues.length - 50} more`);
+  } else {
+    console.log("\n✓ No issues flagged.");
+  }
+})().catch(e => { console.error("\n✗ " + e.message); process.exit(1); });

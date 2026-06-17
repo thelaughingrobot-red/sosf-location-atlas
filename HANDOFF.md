@@ -28,8 +28,14 @@ see the iCloud warning below). The app is in `dev/`.
 Longitude, Notes, Then Image, Now Image, Published`
 - One row per location; Episode/Title/Air Date filled once per episode (fill down).
 - **Description** = the location name shown on the site. **Element** (2-letter tile symbol) auto-generated.
-- **Then Image / Now Image** = EXPLICIT relative paths under `src/images/locations/`
-  (e.g. `s1/e0/loc-1-then.jpg`). Both present → before/after slider; one → single image; none → placeholder.
+- **Then Image / Now Image** = either:
+  - A **local relative path** under `src/images/locations/` (e.g. `s1/e0/loc-1-then.jpg`), OR
+  - A **Flickr photo page URL** (e.g. `https://www.flickr.com/photos/d3bas3r/54241669332/`) —
+    the build resolves it automatically to a direct image URL via Flickr's oEmbed API (no key
+    needed). Copy the URL straight from the browser address bar on the photo page.
+    Resolved URLs are cached in `data/flickr-cache.json` so repeat builds don't re-fetch.
+    Any other `https://` direct image URL also works as-is.
+  Both present → before/after slider; one → single image; none → placeholder.
   Then-Year auto-derives from the episode air date.
 - **Published** = location shows ONLY if truthy (TRUE/yes/1). Blank/FALSE hides it everywhere
   (page, tile, map pin, prev-next nav). All 372 existing pre-filled TRUE.
