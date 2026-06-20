@@ -138,7 +138,7 @@ img { max-width: 100%; display: block; }
 
 .section-head {
   display: flex; align-items: baseline; justify-content: space-between;
-  gap: 1rem; margin: clamp(1.4rem, 6vw, 4rem) 0 1.5rem;
+  gap: 1rem; margin: clamp(1.4rem, 6vw, 2rem) 0 1.5rem;
 }
 .section-head h2 {
   font-weight: var(--weight-display); font-size: clamp(1.6rem,3.5vw,2.4rem);
