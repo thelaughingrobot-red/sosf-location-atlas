@@ -101,15 +101,6 @@ img { max-width: 100%; display: block; }
   text-transform: uppercase;
 }
 .h-hero .of { color: var(--accent); }
-/* long descriptive names render as readable sentence-case text, not a caps wall */
-.h-hero--desc {
-  text-transform: none; font-weight: 600;
-  line-height: 1.2; letter-spacing: -0.005em; margin: 0;
-  max-width: 60ch;
-}
-/* pair the big element glyph down to match the smaller description text */
-.det__title-row--desc { align-items: center; }
-.det__title-row--desc .det__sym { font-size: clamp(1.5rem, 3vw, 1.9rem); }
 
 /* ============================================================
    Home
@@ -225,14 +216,15 @@ img { max-width: 100%; display: block; }
    presence, and prev/next navigation stops jumping. */
 .det__eyebrow-row { display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem; }
 .det__eyebrow-row .eyebrow { margin-bottom: 0; }
-.det__title-row { display: flex; align-items: flex-start; gap: .5rem; margin-top: .5rem; }
-.det__sym {
-  font-weight: var(--weight-display); font-size: var(--fs-symbol);
-  color: var(--accent); line-height: .9; letter-spacing: -0.02em;
+.det__title-row { margin-top: .5rem; }
+/* One size for every location title, and reserve a fixed 2-line height so 1- and
+   2-line titles occupy the same space — the header never changes height, so
+   prev/next navigation never jumps. Longer names clamp to 2 lines with an
+   ellipsis (the full name stays available via the title tooltip). */
+.det__title-row .h-hero {
+  min-height: 1.8em;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.det__coords { font-family: var(--font-mono); font-size: var(--fs-label);
-  letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--muted);
-  flex: none; white-space: nowrap; }
 .det__rule { border: 0; border-top: var(--rule-weight) solid var(--rule); margin: 1.25rem 0 2rem; }
 
 .det__grid {

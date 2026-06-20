@@ -21,6 +21,7 @@
   /* Display scale */
   --fs-hero:    clamp(2.75rem, 9vw, 8rem);
   --fs-title:   clamp(2.25rem, 5.5vw, 4.5rem);
+  --fs-loc-title: clamp(2rem, 4.8vw, 3.6rem); /* location page title — one size for all, no jump */
   --fs-symbol:  clamp(2.25rem, 4vw, 3rem);  /* periodic tile glyph */
   --fs-stat:    clamp(2.75rem, 6.5vw, 5rem);
   --fs-body:    1.0625rem;

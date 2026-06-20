@@ -32,20 +32,6 @@ const tileSym = (s) => {                                       // Gg, As — per
 const pad2 = (n) => String(n).padStart(2, "0");
 const locPath = (s, e, l) => `season-${s}/episode-${e}/${l}/`;
 
-// Size (and style) a location title by its length so it never wraps out of control.
-// Short names stay big UPPERCASE heroes; long descriptive names step down to a
-// readable, sentence-case size instead of a giant caps wall. Returns the font-size,
-// whether to uppercase, and whether it's the small "description" treatment.
-function titleFit(name) {
-  const n = String(name || "").length;
-  if (n <= 12) return { fs: "clamp(2.25rem, 5.5vw, 4.5rem)", up: true,  desc: false };
-  if (n <= 20) return { fs: "clamp(2rem, 4.8vw, 3.6rem)",    up: true,  desc: false };
-  if (n <= 30) return { fs: "clamp(1.75rem, 3.8vw, 2.7rem)", up: true,  desc: false };
-  if (n <= 42) return { fs: "clamp(1.5rem, 2.9vw, 2.05rem)", up: true,  desc: false };
-  if (n <= 80) return { fs: "clamp(1.25rem, 2.1vw, 1.55rem)", up: false, desc: true };
-  return            { fs: "clamp(1.1rem, 1.7vw, 1.3rem)",  up: false, desc: true };
-}
-
 function write(relDir, html) {
   const dir = path.join(OUT, relDir);
   fs.mkdirSync(dir, { recursive: true });
@@ -314,8 +300,6 @@ function pageLocation(se, ep, lo, idx, sibs) {
     ${prev ? `<a class="locnav__link locnav__prev" href="${lp(prev)}"><span class="locnav__dir">&larr; Prev location</span><span class="locnav__name">${esc(prev.name)}</span></a>` : `<span class="locnav__link"></span>`}
     ${next ? `<a class="locnav__link locnav__next" href="${lp(next)}"><span class="locnav__dir">Next location &rarr;</span><span class="locnav__name">${esc(next.name)}</span></a>` : `<span class="locnav__link"></span>`}
   </nav>` : "";
-  const tf = titleFit(lo.name);
-  const titleText = esc(tf.up ? lo.name.toUpperCase() : lo.name);
   const hasCoords = Array.isArray(lo.coords);
   const coordStr = hasCoords ? `${lo.coords[0].toFixed(4)}\u00b0 N · ${Math.abs(lo.coords[1]).toFixed(4)}\u00b0 W` : "";
   const coordDec = hasCoords ? `${lo.coords[0].toFixed(5)}, ${lo.coords[1].toFixed(5)}` : "—";
@@ -342,9 +326,8 @@ function pageLocation(se, ep, lo, idx, sibs) {
     <div class="det__eyebrow-row">
       <span class="label eyebrow">Season ${pad2(se.number)} · Episode ${pad2(ep.number)} · ${esc(ep.title)}</span>
     </div>
-    <div class="det__title-row${tf.desc ? " det__title-row--desc" : ""}">
-      <span class="det__sym">${esc(sym(lo.element))}</span>
-      <h1 class="h-hero${tf.desc ? " h-hero--desc" : ""}" style="font-size:${tf.fs}">${titleText}</h1>
+    <div class="det__title-row">
+      <h1 class="h-hero" style="font-size:var(--fs-loc-title)" title="${esc(lo.name)}">${esc(lo.name.toUpperCase())}</h1>
     </div>
   </div>
   <hr class="det__rule">
