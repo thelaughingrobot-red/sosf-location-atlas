@@ -190,7 +190,7 @@ img { max-width: 100%; display: block; }
 /* prev / next navigation between locations in an episode */
 .locnav {
   display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
-  margin: clamp(1.75rem, 4vw, 2.75rem) 0;
+  margin: 0 0 clamp(1.75rem, 4vw, 2.75rem);
   border-top: var(--hair-weight) solid var(--rule); padding-top: 1.5rem;
 }
 .locnav__link { display: flex; flex-direction: column; gap: .35rem; max-width: 42%; }
@@ -201,9 +201,11 @@ img { max-width: 100%; display: block; }
 }
 .locnav__name { font-weight: 700; font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.015em; }
 .locnav__link:hover .locnav__name { color: var(--accent); }
+/* counter centered above the prev/next line — stable position, no horizontal jump */
 .locnav__count {
   font-family: var(--font-mono); font-size: 0.8125rem; letter-spacing: .08em;
-  color: var(--muted); flex: none; padding-top: .4rem;
+  color: var(--muted); text-align: center;
+  margin: clamp(1.75rem, 4vw, 2.75rem) 0 .9rem;
 }
 
 /* ============================================================

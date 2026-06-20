@@ -295,9 +295,9 @@ function pageLocation(se, ep, lo, idx, sibs) {
   const next = sibs && idx < sibs.length - 1 ? sibs[idx + 1] : null;
   const lp = (l) => url(locPath(se.number, ep.number, l.slug));
   const locnav = sibs && sibs.length > 1 ? `
+  <div class="locnav__count">${pad2(idx + 1)} / ${pad2(sibs.length)}</div>
   <nav class="locnav">
     ${prev ? `<a class="locnav__link locnav__prev" href="${lp(prev)}"><span class="locnav__dir">&larr; Prev location</span><span class="locnav__name">${esc(prev.name)}</span></a>` : `<span class="locnav__link"></span>`}
-    <span class="locnav__count">${pad2(idx + 1)} / ${pad2(sibs.length)}</span>
     ${next ? `<a class="locnav__link locnav__next" href="${lp(next)}"><span class="locnav__dir">Next location &rarr;</span><span class="locnav__name">${esc(next.name)}</span></a>` : `<span class="locnav__link"></span>`}
   </nav>` : "";
   const hasCoords = Array.isArray(lo.coords);
