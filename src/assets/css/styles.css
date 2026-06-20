@@ -101,6 +101,15 @@ img { max-width: 100%; display: block; }
   text-transform: uppercase;
 }
 .h-hero .of { color: var(--accent); }
+/* long descriptive names render as readable sentence-case text, not a caps wall */
+.h-hero--desc {
+  text-transform: none; font-weight: 600;
+  line-height: 1.2; letter-spacing: -0.005em; margin: 0;
+  max-width: 60ch;
+}
+/* pair the big element glyph down to match the smaller description text */
+.det__title-row--desc { align-items: center; }
+.det__title-row--desc .det__sym { font-size: clamp(1.5rem, 3vw, 1.9rem); }
 
 /* ============================================================
    Home
