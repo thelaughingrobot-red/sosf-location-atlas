@@ -323,14 +323,13 @@ function pageLocation(se, ep, lo, idx, sibs) {
 <main class="page"><div class="shell">
   <a class="crumb" href="${url(`season-${se.number}/episode-${ep.number}/`)}">&lsaquo; S${se.number} · E${ep.number}</a>
   <div class="det__head">
-    <div>
+    <div class="det__eyebrow-row">
       <span class="label eyebrow">Season ${pad2(se.number)} · Episode ${pad2(ep.number)} · ${esc(ep.title)}</span>
-      <div class="det__title-row">
-        <span class="det__sym">${esc(sym(lo.element))}</span>
-        <h1 class="h-hero" style="font-size:var(--fs-title)">${esc(lo.name.toUpperCase())}</h1>
-      </div>
     </div>
-    ${hasCoords ? `<span class="det__coords">${coordStr}</span>` : ""}
+    <div class="det__title-row">
+      <span class="det__sym">${esc(sym(lo.element))}</span>
+      <h1 class="h-hero" style="font-size:var(--fs-title)">${esc(lo.name.toUpperCase())}</h1>
+    </div>
   </div>
   <hr class="det__rule">
 

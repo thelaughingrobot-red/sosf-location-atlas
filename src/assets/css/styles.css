@@ -77,7 +77,7 @@ img { max-width: 100%; display: block; }
 /* ============================================================
    Page frame
    ============================================================ */
-.page { padding-top: clamp(2.5rem, 6vw, 4.5rem); padding-bottom: 3rem; }
+.page { padding-top: clamp(1.25rem, 3vw, 2rem); padding-bottom: 3rem; }
 .crumb {
   display: inline-block; margin-bottom: 1rem;
   font-family: var(--font-mono); font-size: var(--fs-label);
@@ -209,14 +209,19 @@ img { max-width: 100%; display: block; }
 /* ============================================================
    Location detail
    ============================================================ */
-.det__head { display: flex; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
-.det__title-row { display: flex; align-items: flex-start; gap: .5rem; margin-top: .4rem; }
+/* coords ride on the eyebrow line (always 1 line, top-right); title is full-width
+   below — so the header height no longer changes with title length or coords
+   presence, and prev/next navigation stops jumping. */
+.det__eyebrow-row { display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem; }
+.det__eyebrow-row .eyebrow { margin-bottom: 0; }
+.det__title-row { display: flex; align-items: flex-start; gap: .5rem; margin-top: .5rem; }
 .det__sym {
   font-weight: var(--weight-display); font-size: var(--fs-symbol);
   color: var(--accent); line-height: .9; letter-spacing: -0.02em;
 }
 .det__coords { font-family: var(--font-mono); font-size: var(--fs-label);
-  letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--muted); }
+  letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--muted);
+  flex: none; white-space: nowrap; }
 .det__rule { border: 0; border-top: var(--rule-weight) solid var(--rule); margin: 1.25rem 0 2rem; }
 
 .det__grid {
