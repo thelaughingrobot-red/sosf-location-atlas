@@ -240,6 +240,9 @@ img { max-width: 100%; display: block; }
   padding: .3rem .55rem;
   font-family: var(--font-mono); font-size: var(--fs-label);
   letter-spacing: var(--tracking-label); text-transform: uppercase;
+  /* THEN badge fades with how much THEN is showing (left of the divider = --split).
+     Single-image frames have no --split, so fall back to fully visible. */
+  opacity: calc(var(--split, 100) / 100); transition: opacity .12s ease;
 }
 .frame img { width: 100%; height: 100%; object-fit: cover; }
 .placeholder {
@@ -251,13 +254,13 @@ img { max-width: 100%; display: block; }
 /* before/after compare */
 .compare { position: relative; aspect-ratio: 3 / 2; overflow: hidden; user-select: none; }
 .compare img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.compare__after { clip-path: inset(0 0 0 var(--split, 50%)); }
+.compare__after { clip-path: inset(0 0 0 calc(var(--split, 50) * 1%)); }
 .compare__line {
-  position: absolute; top: 0; bottom: 0; left: var(--split, 50%);
+  position: absolute; top: 0; bottom: 0; left: calc(var(--split, 50) * 1%);
   width: 2px; background: var(--bg); transform: translateX(-1px); z-index: 4;
 }
 .compare__grip {
-  position: absolute; top: 50%; left: var(--split, 50%);
+  position: absolute; top: 50%; left: calc(var(--split, 50) * 1%);
   width: 34px; height: 34px; transform: translate(-50%, -50%);
   background: var(--bg); border: var(--hair-weight) solid var(--ink);
   display: grid; place-content: center; cursor: ew-resize; z-index: 5;
@@ -267,7 +270,7 @@ img { max-width: 100%; display: block; }
   position: absolute; inset: 0; width: 100%; height: 100%;
   opacity: 0; cursor: ew-resize; z-index: 6; margin: 0;
 }
-.frame__badge--after { left: auto; right: .7rem; }
+.frame__badge--after { left: auto; right: .7rem; opacity: calc(1 - var(--split, 50) / 100); }
 
 /* metadata table */
 .meta { width: 100%; border-collapse: collapse; }
